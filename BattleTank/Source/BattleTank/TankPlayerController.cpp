@@ -27,6 +27,16 @@ ATank* ATankPlayerController::GetControlledTank() const
 	return Cast<ATank>(GetPawn());
 }
 
+void ATankPlayerController::AimTowardsCrosshair()
+{
+	if (!GetControlledTank()) return;
+	FVector HitLocation; //Out Parameter
+	if (GetSightRayHitLocation(HitLocation)) {
+		 UE_LOG(LogTemp, Warning, TEXT("Hit Location : %s"), *HitLocation.ToString())
+		// TODO tell controlled tank to aim at this point
+	}
+}
+
 // Returns true if hit a location in Landscape
 bool ATankPlayerController::GetSightRayHitLocation(FVector &OutHitLocation) const
 {
@@ -39,20 +49,11 @@ bool ATankPlayerController::GetSightRayHitLocation(FVector &OutHitLocation) cons
 	FVector LookDirection;
 	if (GetLookDirection(ScreenLocation, LookDirection))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Look direction : %s"), *LookDirection.ToString())
+		// UE_LOG(LogTemp, Warning, TEXT("Look direction : %s"), *LookDirection.ToString())
+		GetLookVectorHitLocation(LookDirection, OutHitLocation);
 	}
 	// line trace along the look direction, and see what we hit (upto a range)
 	return true;
-}
-
-void ATankPlayerController::AimTowardsCrosshair()
-{
-	if (!GetControlledTank()) return;
-	FVector HitLocation; //Out Parameter
-	if (GetSightRayHitLocation(HitLocation)) {
-		// UE_LOG(LogTemp, Warning, TEXT("Look direction : %s"), *HitLocation.ToString())
-		// TODO tell controlled tank to aim at this point
-	}
 }
 
 bool ATankPlayerController::GetLookDirection(FVector2D ScreenLocation, FVector& LookDirection) const
@@ -62,7 +63,26 @@ bool ATankPlayerController::GetLookDirection(FVector2D ScreenLocation, FVector& 
 	(
 		ScreenLocation.X, 
 		ScreenLocation.Y, 
-		CameraWorldLocation, 
+		CameraWorldLocation,
 		LookDirection
 	);
+}
+
+bool ATankPlayerController::GetLookVectorHitLocation(FVector LookDirection, FVector& OutHitLocation) const
+{
+	FHitResult HitResult;
+	FVector StartLocation = PlayerCameraManager->GetCameraLocation();
+	FVector EndLocation = StartLocation + (LookDirection * LineTraceRange);
+	if (GetWorld()->LineTraceSingleByChannel(
+		HitResult,
+		StartLocation,
+		EndLocation,
+		ECollisionChannel::ECC_Visibility)
+		)
+	{
+		//Set hit location
+		OutHitLocation = HitResult.Location;
+		return true;
+	}
+	return false;
 }
