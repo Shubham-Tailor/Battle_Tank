@@ -3,6 +3,19 @@
 
 #include "TankAIController.h"
 
+void ATankAIController::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+	if (GetPlayerTank()) {
+		// TODO move towards the player
+
+		// Aim towards the player
+		FVector HitLocation = GetPlayerTank()->GetActorLocation();
+		GetControlledTank()->AimAt(HitLocation);
+		// fire if ready
+	}
+}
+
 ATank* ATankAIController::GetControlledTank() const
 {
 	return Cast<ATank>(GetPawn());;
@@ -15,6 +28,7 @@ ATank* ATankAIController::GetPlayerTank() const
 
 void ATankAIController::BeginPlay()
 {
+	Super::BeginPlay();
 	auto ControlledTank = GetControlledTank();
 	if (!ControlledTank) {
 		UE_LOG(LogTemp, Warning, TEXT("AIController not possesing a tank"));
