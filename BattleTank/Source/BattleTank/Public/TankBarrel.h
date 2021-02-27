@@ -6,7 +6,6 @@
 #include "Components/StaticMeshComponent.h"
 #include "TankBarrel.generated.h"
 
-class UTankBarrel;
 /**
  * 
  */
@@ -20,7 +19,7 @@ public:
 
 private:
 	UPROPERTY(EditAnywhere, Category = Setup)
-	float MaxDegreePerSecond{ 5.0f };
+	float MaxDegreePerSecond{ 10.0f };
 
 	UPROPERTY(EditAnywhere, Category = Setup)
 	float MinElevationDegrees{ 0.f };
