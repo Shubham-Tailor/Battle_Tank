@@ -5,16 +5,21 @@
 
 void UTankMovementComponent::IntendMoveForward(float Throw)
 {
-	auto Time = GetWorld()->GetTimeSeconds();
-	UE_LOG(LogTemp, Warning, TEXT("Intend Move Forward Throw : %f"),Throw);
+	if (!LeftTrack || !RightTrack) { return; }
 	LeftTrack->SetThrottle(Throw);
 	RightTrack->SetThrottle(Throw);
+	// TODO prevent Double Speed from Different simultaneous Key input 
+}
+
+void UTankMovementComponent::IntendTurnRight(float Throw)
+{
+	if (!LeftTrack || !RightTrack) { return; }
+	LeftTrack->SetThrottle(Throw);
+	RightTrack->SetThrottle(-Throw);
 }
 
 void UTankMovementComponent::Initialize(UTankTrack* LeftTracktoSet, UTankTrack* RightTrackToSet)
 {
-	if (!LeftTracktoSet || !RightTrackToSet) { return; }
 	LeftTrack = LeftTracktoSet;
 	RightTrack = RightTrackToSet;
-	// TODO prevent Double Speed from Different simultaneous Key input 
 }

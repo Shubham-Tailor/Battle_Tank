@@ -34,6 +34,7 @@ public:
 
 protected:
 	UTankAimingComponent* TankAimingComponent = nullptr;
+
 	UPROPERTY(BluePrintReadOnly)
 	UTankMovementComponent* TankMovementComponent = nullptr;
 
