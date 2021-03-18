@@ -8,7 +8,6 @@ void UTankMovementComponent::IntendMoveForward(float Throw)
 	if (!LeftTrack || !RightTrack) { return; }
 	LeftTrack->SetThrottle(Throw);
 	RightTrack->SetThrottle(Throw);
-	// TODO prevent Double Speed from Different simultaneous Key input 
 }
 
 void UTankMovementComponent::IntendTurnRight(float Throw)
@@ -22,4 +21,17 @@ void UTankMovementComponent::Initialize(UTankTrack* LeftTracktoSet, UTankTrack* 
 {
 	LeftTrack = LeftTracktoSet;
 	RightTrack = RightTrackToSet;
+}
+
+void UTankMovementComponent::RequestDirectMove(const FVector& MoveVelocity, bool bForceMaxSpeed)
+{
+	// No need to call Super(Parent)
+	auto AIForwardIntention = MoveVelocity.GetSafeNormal();
+	auto TankForward = GetOwner()->GetActorForwardVector().GetSafeNormal();
+
+	auto ForwardThrow = FVector::DotProduct(TankForward, AIForwardIntention);
+	IntendMoveForward(ForwardThrow);
+
+	auto TurnThrow = FVector::CrossProduct(TankForward, AIForwardIntention).Z;
+	IntendTurnRight(TurnThrow);
 }
