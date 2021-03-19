@@ -21,7 +21,7 @@ class UTankBarrel;
 class UTankTurret;
 
 //hold barrel's property
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class BATTLETANK_API UTankAimingComponent : public UActorComponent
 {
 	GENERATED_BODY()
@@ -29,20 +29,16 @@ class BATTLETANK_API UTankAimingComponent : public UActorComponent
 private:
 	UTankBarrel* Barrel = nullptr;
 	UTankTurret* Turret = nullptr;
-
+	// Sets default values for this component's properties
+	UTankAimingComponent();
 protected:
 	UPROPERTY(BlueprintReadOnly, Category = "State")
 	EFiringState FiringState = EFiringState::Locked;
 
 public:
-	// Sets default values for this component's properties
-	UTankAimingComponent();
-
 	void AimAt(FVector HitLocation, float LaunchSpeed);
-
-	void SetBarrelReference(UTankBarrel* BarrelToSet);
-
 	void MoveBarrelTowards(FVector AimDirection);
 
-	void SetTurretReference(UTankTurret* TurretToSet);
+	UFUNCTION(BlueprintCallable, Category = "Setup")
+	void Initialize(UTankBarrel* BarrelToSet, UTankTurret* TurretToSet);
 };
