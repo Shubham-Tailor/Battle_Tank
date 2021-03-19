@@ -21,8 +21,6 @@ private:
 	UPROPERTY(EditDefaultsOnly)
 	float LineTraceRange {1000000.f};
 
-	ATank* GetControlledTank() const;
-
 	// Return out parameter, true if hit landscape
 	bool GetSightRayHitLocation(FVector &OutHitLocation) const;
 
@@ -32,6 +30,11 @@ private:
 	bool GetLookDirection(FVector2D ScreenLocation, FVector& LookDirection) const;
 
 	bool GetLookVectorHitLocation(FVector LookDirection, FVector& OutHitLocation) const;
+
+protected:
+	UFUNCTION(BlueprintCallable, Category = "Setup")
+		ATank* GetControlledTank() const;
+
 public:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
