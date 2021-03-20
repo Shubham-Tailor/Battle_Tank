@@ -1,26 +1,27 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Tank.h"
+#include "TankAimingComponent.h"
 #include "TankAIController.h"
 
 void ATankAIController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	auto PlayerTank = Cast<ATank>(GetWorld()->GetFirstPlayerController()->GetPawn());
-	auto ControlledTank = Cast<ATank>(GetPawn());
+	auto PlayerTank = GetWorld()->GetFirstPlayerController()->GetPawn();
+	auto ControlledTank = GetPawn();
+	UE_LOG(LogTemp, Warning, TEXT("SHUBHAM : %s"), *ControlledTank->GetName())
+	if (!ensure(PlayerTank && ControlledTank)) { return; }
+	// move towards the player
+	MoveToActor(PlayerTank, AcceptanceRadius);
+	// Aim towards the player
+	auto AimingComponent = ControlledTank->FindComponentByClass<UTankAimingComponent>();
+	AimingComponent->AimAt(PlayerTank->GetActorLocation());
 
-	if (ensure (PlayerTank)) {
-		// move towards the player
-		MoveToActor(PlayerTank, AcceptanceRadius);
-
-		// Aim towards the player
-		ControlledTank->AimAt(PlayerTank->GetActorLocation());
-		ControlledTank->Fire(); // TODO Limit firing rate 
-	}
+	AimingComponent->Fire(); //TODO fix Firing
 }
 
 void ATankAIController::BeginPlay()
 {
 	Super::BeginPlay();
+	UE_LOG(LogTemp, Warning, TEXT("SHUBHAM I'm here"))
 }
