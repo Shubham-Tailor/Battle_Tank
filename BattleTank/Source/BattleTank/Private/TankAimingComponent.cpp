@@ -1,9 +1,9 @@
 // Shubham Tailor @Shubham-Tailor Copyright All Right Reserved .2021
 
+#include "TankAimingComponent.h"
 #include "TankBarrel.h"
 #include "TankTurret.h"
 #include "Projectile.h"
-#include "TankAimingComponent.h"
 
 // Sets default values for this component's properties
 UTankAimingComponent::UTankAimingComponent()
@@ -16,16 +16,23 @@ UTankAimingComponent::UTankAimingComponent()
 
 void UTankAimingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
-	if ((FPlatformTime::Seconds() - LastFireTime) > ReloadTime)
+	if ((GetWorld()->GetTimeSeconds() - LastFireTime) < ReloadTime)
 	{
 		FiringState = EFiringState::Reloading;
 	}
-	//TODO Handle Aiming and Locked State
+	else if (IsBarrelMoving())
+	{
+		FiringState = EFiringState::Locked;
+	}
+	else
+	{
+		FiringState = EFiringState::Aiming;
+	}
 }
 
 void UTankAimingComponent::BeginPlay() 
 {
-	LastFireTime = FPlatformTime::Seconds();
+	LastFireTime = GetWorld()->GetTimeSeconds();
 }
 
 void UTankAimingComponent::Initialize(UTankBarrel* BarrelToSet, UTankTurret* TurretToSet)
@@ -54,22 +61,29 @@ void UTankAimingComponent::AimAt(FVector HitLocation)
 		ESuggestProjVelocityTraceOption::DoNotTrace
 		))
 	{
-		FVector AimDirection = LaunchVelocity.GetSafeNormal();
+		AimDirection = LaunchVelocity.GetSafeNormal();
 		MoveBarrelTowards(AimDirection);
 	}
 	// if not Found do nothing
 }
 
-void UTankAimingComponent::MoveBarrelTowards(FVector AimDirection)
+void UTankAimingComponent::MoveBarrelTowards(FVector AimDirectionVector)
 {
 	if (!ensure (Turret && Barrel)) { return; }
-	// Decide Yaw, Pitch and Roll through AimDirection of barrel
+	// Decide Yaw, Pitch and Roll through AimDirectionVector of barrel
 	auto BarrelRotator = Barrel->GetForwardVector().Rotation();
-	auto AimAsRotator = AimDirection.Rotation();
+	auto AimAsRotator = AimDirectionVector.Rotation();
 	auto DeltaRotator = AimAsRotator - BarrelRotator;
 
 	Turret->Rotate(DeltaRotator.Yaw);
 	Barrel->Elevate(DeltaRotator.Pitch);
+}
+
+bool UTankAimingComponent::IsBarrelMoving()
+{
+	if (!ensure(Barrel)) { return false; }
+	auto BarrelForward = Barrel->GetForwardVector();
+	return (BarrelForward.Equals(AimDirection, 0.01));
 }
 
 void UTankAimingComponent::Fire()
@@ -85,4 +99,5 @@ void UTankAimingComponent::Fire()
 			);
 		Projectile->LaunchProjectile(LaunchSpeed);
 	}
+	LastFireTime = GetWorld()->GetTimeSeconds();
 }
