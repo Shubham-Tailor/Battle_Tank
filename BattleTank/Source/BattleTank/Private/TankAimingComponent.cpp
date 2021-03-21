@@ -16,6 +16,8 @@ UTankAimingComponent::UTankAimingComponent()
 
 void UTankAimingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
 	if ((GetWorld()->GetTimeSeconds() - LastFireTime) < ReloadTime)
 	{
 		FiringState = EFiringState::Reloading;
