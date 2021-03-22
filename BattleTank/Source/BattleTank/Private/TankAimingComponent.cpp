@@ -34,6 +34,7 @@ void UTankAimingComponent::TickComponent(float DeltaTime, ELevelTick TickType, F
 
 void UTankAimingComponent::BeginPlay() 
 {
+	Super::BeginPlay();
 	LastFireTime = GetWorld()->GetTimeSeconds();
 }
 
@@ -100,6 +101,6 @@ void UTankAimingComponent::Fire()
 			Barrel->GetSocketRotation(FName("Projectile"))
 			);
 		Projectile->LaunchProjectile(LaunchSpeed);
+		LastFireTime = GetWorld()->GetTimeSeconds();
 	}
-	LastFireTime = GetWorld()->GetTimeSeconds();
 }
