@@ -10,9 +10,10 @@ UCLASS()
 class BATTLETANK_API ATankAIController : public AAIController
 {
 	GENERATED_BODY()
-private:
+protected:
 	// How close can AI Tank get
-	float AcceptanceRadius{ 3000.0f }; // TODO check Radius Unit
+	UPROPERTY(EditDefaultsOnly, Category = "Setup")
+	float AcceptanceRadius{ 8000.0f }; // TODO check Radius Unit
 public:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;

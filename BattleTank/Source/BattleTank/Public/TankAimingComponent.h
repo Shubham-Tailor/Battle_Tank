@@ -49,6 +49,7 @@ protected:
 
 public:
 	void AimAt(FVector HitLocation);
+	EFiringState GetFiringState();
 
 	UFUNCTION(BlueprintCallable, Category = "Setup")
 	void Initialize(UTankBarrel* BarrelToSet, UTankTurret* TurretToSet);
