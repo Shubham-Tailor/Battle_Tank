@@ -2,6 +2,8 @@
 
 #pragma once
 #include "Particles/ParticleSystemComponent.h"
+#include "Components/StaticMeshComponent.h"
+#include "PhysicsEngine/RadialForceComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
@@ -21,10 +23,18 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	void OnTimerExpire();
 
 private:
 	UFUNCTION()
-	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
+	void OnHit
+	(
+		UPrimitiveComponent* HitComponent,
+		AActor* OtherActor, 
+		UPrimitiveComponent* OtherComponent,
+		FVector NormalImpulse, 
+		const FHitResult& Hit
+	);
 
 	UProjectileMovementComponent* ProjectileMovement = nullptr;
 
@@ -36,4 +46,13 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	UParticleSystemComponent* ImpactBlast = nullptr;
+
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+	URadialForceComponent* ExplosionForce = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Setup")
+	float DestroyDelay{ 10.0 };
+
+	UPROPERTY(EditDefaultsOnly, Category = "Setup")
+	float ProjectileDamage{ 20.0 };
 };
